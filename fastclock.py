@@ -122,7 +122,7 @@ class FastClockMQTTService:
     def __init__(
         self,
         clock: FastClock,
-        broker: str = "pi3aplus.local",
+        broker: str = "localhost",
         port: int = 1883,
         prefix: str = "layout/clock",
     ) -> None:
@@ -214,7 +214,7 @@ class FastClockMQTTService:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="JMRI-compatible Fast Clock MQTT Publisher")
-    parser.add_argument("--broker", default="pi3aplus.local", help="MQTT broker address (default: pi3aplus.local)")
+    parser.add_argument("--broker", default="localhost", help="MQTT broker address (default: localhost)")
     parser.add_argument("--port", type=int, default=1883, help="MQTT broker port (default: 1883)")
     parser.add_argument("--prefix", default="layout/clock", help="MQTT topic prefix (default: layout/clock)")
     parser.add_argument("--start", default="08:00", help="Initial clock time in HH:MM (default: 08:00)")
