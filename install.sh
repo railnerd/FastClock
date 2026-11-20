@@ -39,6 +39,7 @@ echo "==> Installing systemd service..."
 cp "${INSTALL_DIR}/${SERVICE_NAME}" "/etc/systemd/system/${SERVICE_NAME}"
 systemctl daemon-reload
 systemctl enable --now "${SERVICE_NAME}"
+systemctl restart "${SERVICE_NAME}"
 
 echo "==> FastClock service successfully installed and started!"
 systemctl status "${SERVICE_NAME}" --no-pager
