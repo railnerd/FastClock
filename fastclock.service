@@ -7,8 +7,8 @@ Wants=network-online.target
 Type=simple
 User=dave
 Group=dave
-WorkingDirectory=/home/dave/FastClock
-ExecStart=/home/dave/FastClock/.venv/bin/python /home/dave/FastClock/fastclock.py
+WorkingDirectory=/opt/FastClock
+ExecStart=/opt/FastClock/.venv/bin/python /opt/FastClock/fastclock.py
 Environment=PYTHONUNBUFFERED=1
 Restart=always
 RestartSec=5s

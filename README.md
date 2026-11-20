@@ -102,16 +102,16 @@ python3 fastclock.py --broker 192.168.1.50 --start 06:30 --rate 6.0
 
 A systemd unit file is provided in `fastclock.service`.
 
-1. **Edit `fastclock.service`** if your username or installation directory differs from `/home/pi/FastClock`:
+1. **Edit `fastclock.service`** if your username or installation directory differs from `/opt/FastClock`:
    ```ini
-   User=pi
-   WorkingDirectory=/home/pi/FastClock
-   ExecStart=/usr/bin/python3 /home/pi/FastClock/fastclock.py
+   User=dave
+   WorkingDirectory=/opt/FastClock
+   ExecStart=/opt/FastClock/.venv/bin/python /opt/FastClock/fastclock.py
    ```
 
 2. **Install and enable the service**:
    ```bash
-   sudo cp fastclock.service /etc/systemd/system/
+   sudo cp /opt/FastClock/fastclock.service /etc/systemd/system/
    sudo systemctl daemon-reload
    sudo systemctl enable --now fastclock.service
    ```
