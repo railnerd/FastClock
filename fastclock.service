@@ -5,8 +5,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=dave
-Group=dave
+User=fastclock
+Group=fastclock
 WorkingDirectory=/opt/FastClock
 ExecStart=/opt/FastClock/.venv/bin/python /opt/FastClock/fastclock.py
 Environment=PYTHONUNBUFFERED=1

@@ -100,16 +100,37 @@ python3 fastclock.py --broker 192.168.1.50 --start 06:30 --rate 6.0
 
 ## Running as a Background Service on Raspberry Pi (systemd)
 
-A systemd unit file is provided in `fastclock.service`.
+A systemd unit file is provided in `fastclock.service` configured to run under a dedicated system user (`fastclock`) in `/opt/FastClock`.
 
-1. **Edit `fastclock.service`** if your username or installation directory differs from `/opt/FastClock`:
-   ```ini
-   User=dave
-   WorkingDirectory=/opt/FastClock
-   ExecStart=/opt/FastClock/.venv/bin/python /opt/FastClock/fastclock.py
+### Automated Installation
+
+Clone to `/opt/FastClock` and run the included installation script with `sudo`:
+
+```bash
+sudo git clone https://github.com/railnerd/FastClock.git /opt/FastClock
+cd /opt/FastClock
+sudo ./install.sh
+```
+
+The script will:
+1. Create the dedicated, unprivileged system user `fastclock` (with no login shell).
+2. Create the Python virtual environment and install dependencies.
+3. Set secure ownership of `/opt/FastClock` to `fastclock:fastclock`.
+4. Install and enable the systemd service to start on boot.
+
+### Manual Installation
+
+1. **Create the dedicated system user**:
+   ```bash
+   sudo useradd --system --user-group --shell /usr/sbin/nologin --home-dir /opt/FastClock --no-create-home fastclock
    ```
 
-2. **Install and enable the service**:
+2. **Set ownership**:
+   ```bash
+   sudo chown -R fastclock:fastclock /opt/FastClock
+   ```
+
+3. **Install and enable the service**:
    ```bash
    sudo cp /opt/FastClock/fastclock.service /etc/systemd/system/
    sudo systemctl daemon-reload
