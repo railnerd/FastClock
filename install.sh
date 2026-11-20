@@ -34,6 +34,7 @@ echo "==> Installing / updating Python dependencies..."
 
 echo "==> Setting directory ownership to ${USER_NAME}:${GROUP_NAME}..."
 chown -R "${USER_NAME}:${GROUP_NAME}" "${INSTALL_DIR}"
+git config --system --add safe.directory "${INSTALL_DIR}" 2>/dev/null || true
 
 echo "==> Installing systemd service..."
 cp "${INSTALL_DIR}/${SERVICE_NAME}" "/etc/systemd/system/${SERVICE_NAME}"
