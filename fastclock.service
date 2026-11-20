@@ -1,0 +1,31 @@
+[Unit]
+Description=JMRI Fast Clock MQTT Service
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Adjust User and Group to match your Raspberry Pi user (e.g. pi or your custom username)
+User=pi
+Group=pi
+
+# Path to the cloned repository
+WorkingDirectory=/home/pi/FastClock
+
+# Command to execute; adjust Python path if using a virtual environment (e.g. /home/pi/FastClock/.venv/bin/python)
+ExecStart=/usr/bin/python3 /home/pi/FastClock/fastclock.py
+
+# Ensure Python output is flushed immediately to systemd journal
+Environment=PYTHONUNBUFFERED=1
+
+# Restart automatically if the service crashes or broker temporarily disconnects
+Restart=always
+RestartSec=5s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fastclock
+
+[Install]
+WantedBy=multi-user.target
