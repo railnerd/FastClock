@@ -45,6 +45,59 @@ Publish any of the following UTF-8 strings to `layout/clock/cmd`:
 
 ## Requirements & Installation
 
+### 1. MQTT Broker (Mosquitto)
+
+FastClock requires an MQTT broker to publish and receive messages. If you don't already have one running on your Raspberry Pi or network:
+
+#### On Raspberry Pi OS / Debian / Ubuntu
+
+Install the Mosquitto broker and CLI client tools:
+
+```bash
+sudo apt update
+sudo apt install -y mosquitto mosquitto-clients
+sudo systemctl enable --now mosquitto
+```
+
+> [!TIP]
+> **Allowing Remote Devices & WebSockets (Ports 1883 & 9001)**:
+> By default, Mosquitto 2.0+ only accepts connections from `localhost`. To allow layout devices (JMRI, Wi-Fi throttles) and browser-based displays/dashboards (over WebSockets) to connect, create `/etc/mosquitto/conf.d/local.conf`:
+>
+> ```bash
+> sudo bash -c 'cat <<EOF > /etc/mosquitto/conf.d/local.conf
+> listener 1883
+> allow_anonymous true
+> 
+> listener 9001
+> protocol websockets
+> allow_anonymous true
+> EOF'
+> sudo systemctl restart mosquitto
+> ```
+
+#### On macOS (Development / Testing)
+
+```bash
+brew install mosquitto
+brew services start mosquitto
+```
+
+#### Verifying the Broker
+
+Test broker communication using the CLI tools:
+
+```bash
+# In one terminal, listen for messages:
+mosquitto_sub -h localhost -t "test/topic"
+
+# In another terminal, send a test message:
+mosquitto_pub -h localhost -t "test/topic" -m "hello layout"
+```
+
+---
+
+### 2. Python Environment & Dependencies
+
 1. **Python 3.9+**
 2. **paho-mqtt** client library:
 

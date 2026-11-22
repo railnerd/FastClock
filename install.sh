@@ -36,6 +36,26 @@ echo "==> Setting directory ownership to ${USER_NAME}:${GROUP_NAME}..."
 chown -R "${USER_NAME}:${GROUP_NAME}" "${INSTALL_DIR}"
 git config --system --add safe.directory "${INSTALL_DIR}" 2>/dev/null || true
 
+# Configure Mosquitto for LAN and WebSockets if installed
+if [[ -d "/etc/mosquitto/conf.d" ]]; then
+    MOSQUITTO_CONF="/etc/mosquitto/conf.d/local.conf"
+    if [[ ! -f "$MOSQUITTO_CONF" ]]; then
+        echo "==> Configuring Mosquitto for LAN and WebSockets (ports 1883 & 9001)..."
+        cat <<'EOF' > "$MOSQUITTO_CONF"
+listener 1883
+allow_anonymous true
+
+listener 9001
+protocol websockets
+allow_anonymous true
+EOF
+        if systemctl is-active --quiet mosquitto; then
+            systemctl restart mosquitto
+        fi
+        echo "Configured Mosquitto listeners on 1883 (MQTT) and 9001 (WebSockets)."
+    fi
+fi
+
 echo "==> Installing systemd service..."
 cp "${INSTALL_DIR}/${SERVICE_NAME}" "/etc/systemd/system/${SERVICE_NAME}"
 systemctl daemon-reload
