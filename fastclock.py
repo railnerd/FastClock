@@ -45,12 +45,19 @@ class FastClock:
 
     @staticmethod
     def _parse_time(time_str: str) -> float:
-        """Parses 'H:MM' or 'HH:MM' into seconds from midnight."""
+        """Parses 'H:MM', 'HH:MM', or 'HH:MM:SS' into seconds from midnight."""
         try:
-            h, m = (int(p) for p in time_str.strip().split(":"))
-            if not (0 <= h < 24 and 0 <= m < 60):
-                raise ValueError("Hours (0-23) or minutes (0-59) out of range")
-            return float(h * 3600 + m * 60)
+            parts = [int(p) for p in time_str.strip().split(":")]
+            if len(parts) == 2:
+                h, m = parts
+                s = 0
+            elif len(parts) == 3:
+                h, m, s = parts
+            else:
+                raise ValueError("Expected H:MM or HH:MM:SS")
+            if not (0 <= h < 24 and 0 <= m < 60 and 0 <= s < 60):
+                raise ValueError("Hours (0-23), minutes (0-59), or seconds (0-59) out of range")
+            return float(h * 3600 + m * 60 + s)
         except Exception as err:
             raise ValueError(f"Invalid time format '{time_str}': {err}") from err
 
