@@ -36,9 +36,21 @@ echo "==> Setting directory ownership to ${USER_NAME}:${GROUP_NAME}..."
 chown -R "${USER_NAME}:${GROUP_NAME}" "${INSTALL_DIR}"
 git config --system --add safe.directory "${INSTALL_DIR}" 2>/dev/null || true
 
+# Install and configure Mosquitto MQTT broker if not already present
+if ! command -v mosquitto >/dev/null 2>&1; then
+    echo "==> Installing Mosquitto MQTT broker..."
+    if command -v apt-get >/dev/null 2>&1; then
+        apt-get update
+        apt-get install -y mosquitto mosquitto-clients
+    else
+        echo "Warning: 'apt-get' not found; please install Mosquitto manually." >&2
+    fi
+fi
+
 # Configure Mosquitto for LAN and WebSockets if installed
 if [[ -d "/etc/mosquitto/conf.d" ]]; then
     MOSQUITTO_CONF="/etc/mosquitto/conf.d/local.conf"
+    MOSQUITTO_CONFIGURED=false
     if [[ ! -f "$MOSQUITTO_CONF" ]]; then
         echo "==> Configuring Mosquitto for LAN and WebSockets (ports 1883 & 9001)..."
         cat <<'EOF' > "$MOSQUITTO_CONF"
@@ -49,10 +61,12 @@ listener 9001
 protocol websockets
 allow_anonymous true
 EOF
-        if systemctl is-active --quiet mosquitto; then
-            systemctl restart mosquitto
-        fi
+        MOSQUITTO_CONFIGURED=true
         echo "Configured Mosquitto listeners on 1883 (MQTT) and 9001 (WebSockets)."
+    fi
+    systemctl enable --now mosquitto
+    if [[ "$MOSQUITTO_CONFIGURED" == true ]]; then
+        systemctl restart mosquitto
     fi
 fi
 
